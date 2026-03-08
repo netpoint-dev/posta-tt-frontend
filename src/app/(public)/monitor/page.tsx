@@ -123,7 +123,7 @@ export default function MonitorPage() {
 
     socket.on("announce_ticket", (data: SocketTicketData | Ticket) => {
       const announcedTicket = "ticket" in data ? data.ticket : data;
-
+      
       // Add to recently called for 7 seconds (14 blink cycles) to re-trigger blink
       setRecentlyCalled(prev => new Set(prev).add(announcedTicket.id));
       setTimeout(() => {
@@ -135,12 +135,21 @@ export default function MonitorPage() {
       }, 7000);
     });
 
+    socket.on("queue_cleared", (data: { type: string, admin_uuid: string }) => {
+      if (data.type === "pending") {
+        setPendingTickets([]);
+      } else if (data.type === "calling") {
+        setCallingTickets([]);
+      }
+    });
+
     return () => {
       socket.off("connect", onConnect);
       socket.off("ticket_called");
       socket.off("ticket_completed");
       socket.off("ticket_created");
       socket.off("announce_ticket");
+      socket.off("queue_cleared");
     };
   }, []);
 
