@@ -1,12 +1,4 @@
-const getBaseUrl = () => {
-  if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
-  if (typeof window !== "undefined") {
-    return `http://${window.location.hostname}:8000`;
-  }
-  return "http://localhost:8000";
-};
-
-export const API_URL = getBaseUrl();
+export const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 export const getApiUrl = (path: string) => `${API_URL}${path.startsWith("/") ? path : `/${path}`}`;
 
