@@ -216,7 +216,7 @@ export default function MonitorPage() {
                   key={`${ticket.id}-${index}`}
                   className={`flex flex-col justify-between items-center ${cardGap} rounded-[48px] ${cardPadding} transition-all duration-500 bg-white/90 backdrop-blur-md shadow-[0_20px_50px_rgba(0,0,0,0.08)] border-2 border-white animate-[bounce-subtle_6s_ease-in-out_infinite] overflow-hidden`}
                 >
-                  <div className="self-end justify-self-start bg-[#8C52FF] text-white text-[1vh] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-purple-500/20 shrink-0">
+                  <div className="self-end justify-self-start bg-[#8C52FF] text-white text-2xl font-black px-6 py-2 rounded-full uppercase tracking-widest shadow-lg shadow-purple-500/20 shrink-0">
                     Llamando Ahora
                   </div>
 

@@ -3,7 +3,7 @@
 import { apiFetch, getApiUrl } from "@/lib/api";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Printer, ChevronRight } from "lucide-react";
+import { Printer, ChevronRight, Zap, AlertTriangle } from "lucide-react";
 import { useBarcodeScanner } from "@/lib/useBarcodeScanner";
 
 interface Queue {
@@ -24,14 +24,16 @@ export default function TotemPage() {
   const [loading, setLoading] = useState(true);
   const [printing, setPrinting] = useState(false);
   const [ticketResult, setTicketResult] = useState<{ ticket_number: string } | null>(null);
+  const [showWarningToast, setShowWarningToast] = useState(false);
 
 
-  // Usamos el hook pasando la lógica de lo que queremos hacer
-  useBarcodeScanner((code) => {
+  const scanDni = (code: string) => {
     let splitCode = code.split("@")
     let clientInfo: ClientInfo = { dni: splitCode[4], full_name: `${splitCode[1]}, ${splitCode[2]}` }
     handlePrint(clientInfo)
-  });
+  }
+  // Usamos el hook pasando la lógica de lo que queremos hacer
+  useBarcodeScanner(scanDni);
 
   useEffect(() => {
     const fetchQueues = async () => {
@@ -51,7 +53,11 @@ export default function TotemPage() {
   }, []);
 
   const handlePrint = async (clientInfo?: ClientInfo) => {
-    if (!selectedQueue) return;
+    if (!selectedQueue) {
+      setShowWarningToast(true);
+      setTimeout(() => setShowWarningToast(false), 3000);
+      return;
+    }
 
     setPrinting(true);
     let body = {
@@ -106,7 +112,29 @@ export default function TotemPage() {
   );
 
   return (
-    <div className="flex flex-col min-h-screen p-12 max-w-7xl mx-auto bg-[#F9FAFB]">
+    <div className="flex flex-col min-h-screen p-12 max-w-7xl mx-auto bg-[#F9FAFB] relative">
+      {/* Toast Alert */}
+      <div
+        className={`fixed top-20 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-300 pointer-events-none ${showWarningToast
+          ? "opacity-100 translate-y-0"
+          : "opacity-0 -translate-y-4"
+          }`}
+      >
+        <div className="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4 rounded-xl shadow-2xl flex items-center gap-6">
+          <AlertTriangle className="w-10 h-10 shrink-0" />
+          <p className="font-bold text-3xl">Debes elegir una sección primero</p>
+        </div>
+      </div>
+
+      {process.env.NODE_ENV === 'development' && (
+        <button
+          onClick={() => scanDni('00815727812@PEREZ@JUAN DANIEL@M@48291020@B@15/03/01@30/02/2020@20482910202')}
+          className="absolute top-8 right-8 p-4 bg-yellow-100 text-yellow-500 rounded-2xl hover:bg-yellow-200 transition-all hover:scale-105 shadow-sm"
+          title="Simular DNI"
+        >
+          <Zap size={32} />
+        </button>
+      )}
       <header className="mb-16 flex flex-col items-center text-center">
         <Image
           src="/tuturno_logo.svg"
