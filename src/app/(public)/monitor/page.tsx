@@ -47,6 +47,11 @@ export default function MonitorPage() {
   const [pendingTickets, setPendingTickets] = useState<Ticket[]>([]);
   const [queues, setQueues] = useState<Record<string, string>>({});
 
+  // Track recently called tickets for blinking animation (7 seconds)
+  const [recentlyCalled, setRecentlyCalled] = useState<Set<number>>(new Set());
+  // Track recently completed tickets for pop-out animation
+  const [recentlyCompleted, setRecentlyCompleted] = useState<Set<number>>(new Set());
+
   useEffect(() => {
     // Initial fetch of current state
     const fetchState = async () => {
@@ -82,11 +87,33 @@ export default function MonitorPage() {
       const calledTicket = "ticket" in data ? data.ticket : data;
       setCallingTickets(prev => [calledTicket, ...prev.filter(t => t.id !== calledTicket.id)]);
       setPendingTickets(prev => prev.filter(t => t.id !== calledTicket.id));
+
+      // Add to recently called for 7 seconds (14 blink cycles)
+      setRecentlyCalled(prev => new Set(prev).add(calledTicket.id));
+      setTimeout(() => {
+        setRecentlyCalled(prev => {
+          const next = new Set(prev);
+          next.delete(calledTicket.id);
+          return next;
+        });
+      }, 7000);
     });
 
     socket.on("ticket_completed", (data: SocketTicketData | Ticket) => {
       const completedTicket = "ticket" in data ? data.ticket : data;
-      setCallingTickets(prev => prev.filter(t => t.id !== completedTicket.id));
+
+      // Add to recently completed for animation
+      setRecentlyCompleted(prev => new Set(prev).add(completedTicket.id));
+
+      // Delay actual removal to allow animation to play
+      setTimeout(() => {
+        setCallingTickets(prev => prev.filter(t => t.id !== completedTicket.id));
+        setRecentlyCompleted(prev => {
+          const next = new Set(prev);
+          next.delete(completedTicket.id);
+          return next;
+        });
+      }, 500); // 500ms matches pop-out animation duration
     });
 
     socket.on("ticket_created", (data: SocketTicketData | Ticket) => {
@@ -94,11 +121,26 @@ export default function MonitorPage() {
       setPendingTickets(prev => [...prev, newTicket]);
     });
 
+    socket.on("announce_ticket", (data: SocketTicketData | Ticket) => {
+      const announcedTicket = "ticket" in data ? data.ticket : data;
+
+      // Add to recently called for 7 seconds (14 blink cycles) to re-trigger blink
+      setRecentlyCalled(prev => new Set(prev).add(announcedTicket.id));
+      setTimeout(() => {
+        setRecentlyCalled(prev => {
+          const next = new Set(prev);
+          next.delete(announcedTicket.id);
+          return next;
+        });
+      }, 7000);
+    });
+
     return () => {
       socket.off("connect", onConnect);
       socket.off("ticket_called");
       socket.off("ticket_completed");
       socket.off("ticket_created");
+      socket.off("announce_ticket");
     };
   }, []);
 
@@ -211,12 +253,21 @@ export default function MonitorPage() {
                 cardPadding = "p-4";
               }
 
+              const isRecentlyCalled = recentlyCalled.has(ticket.id);
+              const isRecentlyCompleted = recentlyCompleted.has(ticket.id);
+
+              const animationClass = isRecentlyCompleted
+                ? "animate-pop-out"
+                : isRecentlyCalled
+                  ? "animate-blink-intense"
+                  : "animate-[bounce-subtle_6s_ease-in-out_infinite]";
+
               return (
                 <div
                   key={`${ticket.id}-${index}`}
-                  className={`flex flex-col justify-between items-center ${cardGap} rounded-[48px] ${cardPadding} transition-all duration-500 bg-white/90 backdrop-blur-md shadow-[0_20px_50px_rgba(0,0,0,0.08)] border-2 border-white animate-[bounce-subtle_6s_ease-in-out_infinite] overflow-hidden`}
+                  className={`flex flex-col justify-between items-center ${cardGap} rounded-[48px] ${cardPadding} transition-all duration-500 bg-white/90 backdrop-blur-md shadow-[0_20px_50px_rgba(0,0,0,0.08)] border-2 border-white overflow-hidden ${animationClass}`}
                 >
-                  <div className="self-end justify-self-start bg-[#8C52FF] text-white text-2xl font-black px-6 py-2 rounded-full uppercase tracking-widest shadow-lg shadow-purple-500/20 shrink-0">
+                  <div className="self-end justify-self-start bg-[#8C52FF] text-white text-xl font-black px-6 py-2 rounded-full uppercase tracking-widest shadow-lg shadow-purple-500/20 shrink-0">
                     Llamando Ahora
                   </div>
 
@@ -232,7 +283,7 @@ export default function MonitorPage() {
                     )}
                   </div>
                   {/* Queue Badge in Grid */}
-                  <span className="px-4 py-1.5 rounded-xl text-[1.2vh] font-black uppercase tracking-wider bg-[#14A1FA]/10 text-[#14A1FA] shrink-0">
+                  <span className="px-4 py-1.5 rounded-xl text-2xl font-black uppercase tracking-wider bg-[#14A1FA]/10 text-[#14A1FA] shrink-0">
                     {queues[ticket.queue_uuid] || 'Sección'}
                   </span>
                 </div>
