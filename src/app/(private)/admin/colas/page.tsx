@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import { Plus, Trash2, Layers, Clock } from "lucide-react";
+import { Plus, Trash2, Layers, Clock, AlertOctagon } from "lucide-react";
 import { apiFetch } from "@/lib/api";
 
 interface Queue {
@@ -83,6 +83,34 @@ export default function QueuesAdminPage() {
     }
   };
 
+  const handleClearPending = async () => {
+    if (!confirm("¿Estás seguro que querés limpiar los tickets en espera?")) return;
+    try {
+      const token = Cookies.get("access_token");
+      await apiFetch("/tickets/admin/clear-pending", {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      alert("Tickets en espera limpiados.");
+    } catch (err) {
+      console.error("Failed to clear pending tickets", err);
+    }
+  };
+
+  const handleClearCalling = async () => {
+    if (!confirm("¿Estás seguro que querés limpiar los tickets llamados?")) return;
+    try {
+      const token = Cookies.get("access_token");
+      await apiFetch("/tickets/admin/clear-calling", {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      alert("Tickets llamados limpiados.");
+    } catch (err) {
+      console.error("Failed to clear calling tickets", err);
+    }
+  };
+
   if (loading) return (
     <div className="flex items-center justify-center py-20">
       <div className="w-8 h-8 border-4 border-[#8054FF]/20 border-t-[#8054FF] rounded-full animate-spin" />
@@ -91,9 +119,27 @@ export default function QueuesAdminPage() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-8">
-      <header>
-        <h1 className="text-[24px] font-bold text-[#1F2937] border-none mb-0.5">Gestión de Colas</h1>
-        <p className="text-[#6B7280] text-[14px]">Administrá las secciones y prefijos de atención.</p>
+      <header className="flex flex-col gap-3 md:flex-row items-start justify-between">
+        <div>
+          <h1 className="text-[24px] font-bold text-[#1F2937] border-none mb-0.5">Gestión de Colas</h1>
+          <p className="text-[#6B7280] text-[14px]">Administrá las secciones y prefijos de atención.</p>
+        </div>
+        <div className="flex gap-3">
+          <button
+            onClick={handleClearPending}
+            className="flex items-center gap-2 bg-white text-orange-600 border border-orange-200 hover:bg-orange-50 px-4 py-2 rounded-xl text-[13px] font-bold transition-all shadow-sm"
+          >
+            <AlertOctagon size={16} />
+            Limpiar En Espera
+          </button>
+          <button
+            onClick={handleClearCalling}
+            className="flex items-center gap-2 bg-white text-red-600 border border-red-200 hover:bg-red-50 px-4 py-2 rounded-xl text-[13px] font-bold transition-all shadow-sm"
+          >
+            <Trash2 size={16} />
+            Limpiar Llamando
+          </button>
+        </div>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
