@@ -74,7 +74,7 @@ export default function LoginPage() {
     <div className="w-full">
       <div className="mb-6">
         <h2 className="text-[24px] font-bold text-[#1F2937] border-none mb-0.5">Bienvenido</h2>
-        <p className="text-[#6B7280] text-[14px]">Ingrese sus credenciales para acceder.</p>
+        <p className="text-[#6B7280] text-[14px]">Ingresá tus credenciales para acceder.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -144,14 +144,14 @@ export default function LoginPage() {
       <div className="mt-6 pt-5 border-t border-gray-100 space-y-3">
         <div className="text-center text-[14px] font-medium text-[#9CA3AF]">
           <span>
-            ¿No tienes cuenta?{" "}
+            ¿No tenés una cuenta?{" "}
           </span>
           <Link href="/register" className="hover:text-[#4B5563] transition-colors">
-            <span className="text-[#8054FF] font-bold hover:underline">Regístrate</span>
+            <span className="text-[#8054FF] font-bold hover:underline">Registrarse</span>
           </Link>
         </div>
         <p className="text-center text-[12px] font-medium text-[#9CA3AF]">
-          Si olvidó su contraseña, contacte con un administrador.
+          Si olvidaste tu contraseña, contactá con un administrador.
         </p>
       </div>
     </div>

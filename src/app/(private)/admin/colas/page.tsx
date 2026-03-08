@@ -49,8 +49,8 @@ export default function QueuesAdminPage() {
       const token = Cookies.get("access_token");
       const res = await apiFetch("/queues", {
         method: "POST",
-        headers: { 
-          "Authorization": `Bearer ${token}` 
+        headers: {
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
           prefix: newPrefix,
@@ -93,7 +93,7 @@ export default function QueuesAdminPage() {
     <div className="space-y-6 max-w-7xl mx-auto pb-8">
       <header>
         <h1 className="text-[24px] font-bold text-[#1F2937] border-none mb-0.5">Gestión de Colas</h1>
-        <p className="text-[#6B7280] text-[14px]">Administra las secciones y prefijos de atención.</p>
+        <p className="text-[#6B7280] text-[14px]">Administrá las secciones y prefijos de atención.</p>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -109,7 +109,7 @@ export default function QueuesAdminPage() {
                 <input
                   type="text"
                   required
-                  maxLength={1}
+                  maxLength={4}
                   value={newPrefix}
                   onChange={(e) => setNewPrefix(e.target.value.toUpperCase())}
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#8054FF] focus:ring-4 focus:ring-[#8054FF]/10 focus:outline-none transition-all text-[#1F2937] font-bold uppercase text-[14px]"

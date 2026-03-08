@@ -36,7 +36,7 @@ export default function OperatorPage() {
   const [selectedQueues, setSelectedQueues] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [calling, setCalling] = useState(false);
-  
+
   // History State
   const [history, setHistory] = useState<Ticket[]>([]);
   const [historyCursor, setHistoryCursor] = useState<string | null>(null);
@@ -48,7 +48,7 @@ export default function OperatorPage() {
       try {
         const token = Cookies.get("access_token");
         const userData = Cookies.get("user");
-        
+
         if (userData) {
           const user = JSON.parse(userData);
           socket.emit("join_operator", { operator_uuid: user.uuid });
@@ -58,13 +58,13 @@ export default function OperatorPage() {
           apiFetch("/queues", { headers: { "Authorization": `Bearer ${token}` } }),
           apiFetch("/tickets/history?limit=5", { headers: { "Authorization": `Bearer ${token}` } })
         ]);
-        
+
         const queuesData = await queuesRes.json();
         const historyData = await historyRes.json();
-        
+
         setAvailableQueues(queuesData);
         setSelectedQueues(queuesData.map((q: any) => q.uuid));
-        
+
         setHistory(historyData.items);
         setHistoryCursor(historyData.next_cursor);
         setHasMoreHistory(!!historyData.next_cursor);
@@ -90,7 +90,7 @@ export default function OperatorPage() {
 
   const fetchMoreHistory = async () => {
     if (loadingHistory || !hasMoreHistory || !historyCursor) return;
-    
+
     setLoadingHistory(true);
     try {
       const token = Cookies.get("access_token");
@@ -98,7 +98,7 @@ export default function OperatorPage() {
         headers: { "Authorization": `Bearer ${token}` }
       });
       const data = await res.json();
-      
+
       setHistory(prev => [...prev, ...data.items]);
       setHistoryCursor(data.next_cursor);
       setHasMoreHistory(!!data.next_cursor);
@@ -239,7 +239,7 @@ export default function OperatorPage() {
               </div>
               <div className="space-y-1">
                 <h2 className="text-2xl font-bold text-[#1F2937]">Panel de Espera</h2>
-                <p className="text-[#6B7280] font-medium text-[15px]">Selecciona tus secciones y llama al siguiente.</p>
+                <p className="text-[#6B7280] font-medium text-[15px]">Seleccioná tus secciones y llamá al siguiente.</p>
               </div>
               <div className="space-y-3">
                 <button
@@ -255,7 +255,7 @@ export default function OperatorPage() {
                   {calling ? "Llamando..." : "Siguiente Turno"}
                 </button>
                 {selectedQueues.length === 0 && (
-                  <p className="text-[12px] text-[#EF4444] font-bold uppercase tracking-wider">Debe seleccionar al menos una sección.</p>
+                  <p className="text-[12px] text-[#EF4444] font-bold uppercase tracking-wider">Tenés que seleccionar al menos una sección.</p>
                 )}
               </div>
             </div>
@@ -284,13 +284,13 @@ export default function OperatorPage() {
                 <div className="bg-gray-50 p-3 rounded-full text-[#D1D5DB] mb-2">
                   <Clock size={28} strokeWidth={1.5} />
                 </div>
-                <p className="text-[#9CA3AF] text-[13px] font-medium px-4">No has atendido turnos todavía.</p>
+                <p className="text-[#9CA3AF] text-[13px] font-medium px-4">Todavía no atendiste ningún turno.</p>
               </div>
             ) : (
               <div className="space-y-2">
                 {history.map((ticket) => (
-                  <div 
-                    key={ticket.id} 
+                  <div
+                    key={ticket.id}
                     className="p-3 bg-gray-50/50 rounded-xl border border-gray-100 hover:border-gray-200 transition-all group"
                   >
                     <div className="flex items-center justify-between mb-1">
@@ -309,7 +309,7 @@ export default function OperatorPage() {
                     )}
                   </div>
                 ))}
-                
+
                 {hasMoreHistory && (
                   <button
                     onClick={fetchMoreHistory}

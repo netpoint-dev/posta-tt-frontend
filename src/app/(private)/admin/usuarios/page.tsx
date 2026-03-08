@@ -18,7 +18,7 @@ export default function UsersAdminPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showInactive, setShowInactive] = useState(false);
-  
+
   // Edit states
   const [editingUuid, setEditingUuid] = useState<string | null>(null);
   const [newRole, setNewRole] = useState<"admin" | "operator">("operator");
@@ -49,7 +49,7 @@ export default function UsersAdminPage() {
       const token = Cookies.get("access_token");
       const res = await apiFetch(`/users/${uuid}/role`, {
         method: "PATCH",
-        headers: { 
+        headers: {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json"
         },
@@ -71,12 +71,12 @@ export default function UsersAdminPage() {
   const toggleStatus = async (uuid: string, currentStatus: boolean) => {
     const action = currentStatus ? "desactivar" : "reactivar";
     if (currentStatus && !confirm(`¿Seguro que deseas ${action} a este usuario?`)) return;
-    
+
     try {
       const token = Cookies.get("access_token");
       const res = await apiFetch(`/users/${uuid}/status`, {
         method: "PATCH",
-        headers: { 
+        headers: {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json"
         },
@@ -105,7 +105,7 @@ export default function UsersAdminPage() {
       <header className="flex justify-between items-end">
         <div>
           <h1 className="text-[24px] font-bold text-[#1F2937] border-none mb-0.5">Gestión de Usuarios</h1>
-          <p className="text-[#6B7280] text-[14px]">Administra el personal y sus permisos de acceso.</p>
+          <p className="text-[#6B7280] text-[14px]">Administrá el personal y sus permisos de acceso.</p>
         </div>
         <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border border-gray-100 shadow-sm">
           <label className="text-[12px] font-bold text-[#6B7280] cursor-pointer" htmlFor="showInactive">
@@ -143,92 +143,92 @@ export default function UsersAdminPage() {
               {users
                 .filter(user => showInactive || user.is_active)
                 .map(user => (
-                <tr key={user.uuid} className="group hover:bg-gray-50/50 transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-gray-50 rounded-xl text-[#9CA3AF] group-hover:bg-white group-hover:text-[#8054FF] border border-transparent group-hover:border-gray-100 transition-all">
-                        <UserCircle size={22} />
+                  <tr key={user.uuid} className="group hover:bg-gray-50/50 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-gray-50 rounded-xl text-[#9CA3AF] group-hover:bg-white group-hover:text-[#8054FF] border border-transparent group-hover:border-gray-100 transition-all">
+                          <UserCircle size={22} />
+                        </div>
+                        <div>
+                          <p className="font-bold text-[14px] text-[#1F2937]">{user.full_name}</p>
+                          <p className="text-[12px] font-medium text-[#9CA3AF]">@{user.username}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-bold text-[14px] text-[#1F2937]">{user.full_name}</p>
-                        <p className="text-[12px] font-medium text-[#9CA3AF]">@{user.username}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    {editingUuid === user.uuid ? (
-                      <div className="flex items-center gap-2">
-                        <select
-                          value={newRole}
-                          onChange={(e) => setNewRole(e.target.value as "admin" | "operator")}
-                          className="px-3 py-1.5 rounded-lg border border-gray-200 text-[12px] font-bold text-[#1F2937] focus:outline-none focus:border-[#8054FF]"
-                        >
-                          <option value="operator">Operator</option>
-                          <option value="admin">Admin</option>
-                        </select>
-                        <button 
-                          onClick={() => handleUpdateRole(user.uuid)}
-                          className="p-1.5 text-green-600 hover:bg-green-50 rounded-lg"
-                        >
-                          <Check size={16} />
-                        </button>
-                        <button 
-                          onClick={() => setEditingUuid(null)}
-                          className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg"
-                        >
-                          <X size={16} />
-                        </button>
-                      </div>
-                    ) : (
-                      <span className={`
-                        px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider
-                        ${user.role === "admin" 
-                          ? "bg-[#8054FF]/10 text-[#8054FF]" 
-                          : "bg-[#14A1FA]/10 text-[#14A1FA]"}
-                      `}>
-                        {user.role}
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <div className={`w-2 h-2 rounded-full ${user.is_active ? "bg-[#10B981]" : "bg-[#EF4444]"}`} />
-                      <span className="text-[12px] font-bold text-[#6B7280]">{user.is_active ? "Activo" : "Inactivo"}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex justify-end gap-2">
-                      <button 
-                        onClick={() => {
-                          setEditingUuid(user.uuid);
-                          setNewRole(user.role);
-                        }}
-                        className="p-2.5 text-[#9CA3AF] hover:text-[#1F2937] hover:bg-white border border-transparent hover:border-gray-100 transition-all rounded-xl"
-                      >
-                        <Edit size={16} />
-                      </button>
-                      
-                      {user.is_active ? (
-                        <button 
-                          onClick={() => toggleStatus(user.uuid, true)}
-                          title="Desactivar usuario"
-                          className="p-2.5 text-[#EF4444]/60 hover:text-[#EF4444] hover:bg-red-50 transition-all rounded-xl"
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                    </td>
+                    <td className="px-6 py-4">
+                      {editingUuid === user.uuid ? (
+                        <div className="flex items-center gap-2">
+                          <select
+                            value={newRole}
+                            onChange={(e) => setNewRole(e.target.value as "admin" | "operator")}
+                            className="px-3 py-1.5 rounded-lg border border-gray-200 text-[12px] font-bold text-[#1F2937] focus:outline-none focus:border-[#8054FF]"
+                          >
+                            <option value="operator">Operator</option>
+                            <option value="admin">Admin</option>
+                          </select>
+                          <button
+                            onClick={() => handleUpdateRole(user.uuid)}
+                            className="p-1.5 text-green-600 hover:bg-green-50 rounded-lg"
+                          >
+                            <Check size={16} />
+                          </button>
+                          <button
+                            onClick={() => setEditingUuid(null)}
+                            className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg"
+                          >
+                            <X size={16} />
+                          </button>
+                        </div>
                       ) : (
-                        <button 
-                          onClick={() => toggleStatus(user.uuid, false)}
-                          title="Reactivar usuario"
-                          className="p-2.5 text-[#10B981]/60 hover:text-[#10B981] hover:bg-green-50 transition-all rounded-xl"
-                        >
-                          <RotateCcw size={16} />
-                        </button>
+                        <span className={`
+                        px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider
+                        ${user.role === "admin"
+                            ? "bg-[#8054FF]/10 text-[#8054FF]"
+                            : "bg-[#14A1FA]/10 text-[#14A1FA]"}
+                      `}>
+                          {user.role}
+                        </span>
                       )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-2 h-2 rounded-full ${user.is_active ? "bg-[#10B981]" : "bg-[#EF4444]"}`} />
+                        <span className="text-[12px] font-bold text-[#6B7280]">{user.is_active ? "Activo" : "Inactivo"}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() => {
+                            setEditingUuid(user.uuid);
+                            setNewRole(user.role);
+                          }}
+                          className="p-2.5 text-[#9CA3AF] hover:text-[#1F2937] hover:bg-white border border-transparent hover:border-gray-100 transition-all rounded-xl"
+                        >
+                          <Edit size={16} />
+                        </button>
+
+                        {user.is_active ? (
+                          <button
+                            onClick={() => toggleStatus(user.uuid, true)}
+                            title="Desactivar usuario"
+                            className="p-2.5 text-[#EF4444]/60 hover:text-[#EF4444] hover:bg-red-50 transition-all rounded-xl"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => toggleStatus(user.uuid, false)}
+                            title="Reactivar usuario"
+                            className="p-2.5 text-[#10B981]/60 hover:text-[#10B981] hover:bg-green-50 transition-all rounded-xl"
+                          >
+                            <RotateCcw size={16} />
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
           {users.length === 0 && !error && (

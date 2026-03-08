@@ -99,7 +99,7 @@ export default function TotemPage() {
           {ticketResult.ticket_number}
         </div>
         <p className="text-4xl text-[#9CA3AF] font-bold leading-relaxed">
-          Por favor, retire su ticket<br />y aguarde a ser llamado en el monitor.
+          Por favor, retirá tu ticket<br />y aguardá a ser llamado en el monitor.
         </p>
       </div>
     </div>
@@ -117,7 +117,7 @@ export default function TotemPage() {
           priority
         />
         <h1 className="text-6xl font-black text-[#1F2937] mb-4 tracking-tight">¡Bienvenido!</h1>
-        <p className="text-4xl text-[#6B7280] font-medium">Seleccione el área de atención</p>
+        <p className="text-4xl text-[#6B7280] font-medium">Seleccioná el área de atención</p>
       </header>
 
       <div className="grid md:grid-cols-2 gap-10 flex-grow mb-16">

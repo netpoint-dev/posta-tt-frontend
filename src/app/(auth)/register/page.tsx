@@ -43,7 +43,7 @@ export default function RegisterPage() {
     <div className="w-full">
       <div className="mb-6">
         <h2 className="text-[24px] font-bold text-[#1F2937] border-none mb-0.5">Registro</h2>
-        <p className="text-[#6B7280] text-[14px]">Ingrese sus datos para crear una cuenta.</p>
+        <p className="text-[#6B7280] text-[14px]">Ingresá tus datos para crear una cuenta.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -129,7 +129,7 @@ export default function RegisterPage() {
 
       <div className="mt-6 pt-5 border-t border-gray-100">
         <Link href="/login" className="block text-center text-[14px] font-medium text-[#9CA3AF] hover:text-[#4B5563] transition-colors">
-          ¿Ya tienes cuenta? <span className="text-[#8054FF] font-bold hover:underline">Inicia sesión</span>
+          ¿Ya tenés una cuenta? <span className="text-[#8054FF] font-bold hover:underline">Iniciá sesión</span>
         </Link>
       </div>
     </div>

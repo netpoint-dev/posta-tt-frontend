@@ -21,6 +21,27 @@ interface SocketTicketData {
   ticket: Ticket;
 }
 
+function LiveClock() {
+  const [time, setTime] = useState<Date | null>(null);
+
+  useEffect(() => {
+    setTime(new Date());
+    const timer = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  if (!time) {
+    // Preserve layout during SSR
+    return <span className="text-[#1F2937] font-black text-2xl tracking-tight opacity-0">00:00</span>;
+  }
+
+  return (
+    <span className="text-[#1F2937] font-black text-2xl tracking-tight">
+      {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+    </span>
+  );
+}
+
 export default function MonitorPage() {
   const [callingTickets, setCallingTickets] = useState<Ticket[]>([]);
   const [pendingTickets, setPendingTickets] = useState<Ticket[]>([]);
@@ -224,7 +245,7 @@ export default function MonitorPage() {
               <Volume2 className="w-24 h-24 opacity-30" strokeWidth={1} />
             </div>
             <h2 className="text-3xl font-black text-[#1F2937] tracking-tight mb-2">Pantalla de Espera</h2>
-            <p className="text-lg font-bold opacity-60">Tu número aparecerá aquí cuando seas llamado.</p>
+            <p className="text-lg font-bold opacity-60">Tu número aparecerá acá cuando seas llamado.</p>
           </div>
         )}
       </main>
@@ -235,9 +256,7 @@ export default function MonitorPage() {
           <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(34,197,94,0.5)]"></div>
         </div>
         <div className="flex flex-col">
-          <span className="text-[#1F2937] font-black text-2xl tracking-tight">
-            {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-          </span>
+          <LiveClock />
         </div>
       </footer>
     </div>
