@@ -66,13 +66,19 @@ export default function TotemPage() {
       ...(clientInfo?.full_name && { full_name: clientInfo.full_name })
     }
     try {
-      console.log(body);
-
       const res = await apiFetch("/tickets/", {
         method: "POST",
         body: JSON.stringify(body),
       });
       const data = await res.json();
+
+      const printRes = await fetch(`${process.env.NEXT_PUBLIC_PRINTER_API_URL}/print/turn`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
       setTicketResult(data);
       // Reset after some time
       setTimeout(() => {
